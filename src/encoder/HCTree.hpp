@@ -29,9 +29,6 @@ class HCTree {
     ~HCTree();
 
     /* TODO: add function header */
-    HCNode* getRoot();
-
-    /* TODO: add function header */
     void build(const vector<unsigned int>& freqs);
 
     /* TODO: add function header */

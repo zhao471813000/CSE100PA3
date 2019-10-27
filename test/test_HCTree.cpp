@@ -1,9 +1,3 @@
-/**
- * HCTree test
- *
- * Author: Sander Valstar
- */
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -22,20 +16,19 @@ class SimpleHCTreeFixture : public ::testing::Test {
     SimpleHCTreeFixture() {
         // initialization code here
         vector<unsigned int> freqs(256);
-        freqs['a'] = 1;
+        freqs['a'] = 2;
+        freqs['b'] = 3;
         tree.build(freqs);
     }
-    // code in SetUp() will execute just before the test ensues
-    // void SetUp() {}
 };
 
-TEST_F(SimpleHCTreeFixture, getRoot) {
-    ASSERT_EQ(tree.getRoot()->symbol, '\0');
-    ASSERT_EQ(tree.getRoot()->count, 0);
-}
-
-TEST_F(SimpleHCTreeFixture, encode) {
+TEST_F(SimpleHCTreeFixture, TEST_ENCODE) {
     ostringstream os;
     tree.encode('a', os);
     ASSERT_EQ(os.str(), "0");
+}
+
+TEST_F(SimpleHCTreeFixture, TEST_DECODE) {
+    istringstream is("1");
+    ASSERT_EQ(tree.decode(is), 'b');
 }

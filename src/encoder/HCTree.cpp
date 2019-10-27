@@ -9,9 +9,6 @@
 HCTree::~HCTree() {}
 
 /* TODO */
-HCNode* HCTree::getRoot() { return nullptr; }
-
-/* TODO */
 void HCTree::build(const vector<unsigned int>& freqs) {}
 
 /* TODO */
