@@ -17,7 +17,7 @@ void pseudoDecompression(string inFileName, string outFileName) {}
 /* TODO: True decompression with bitwise i/o and small header (final) */
 void trueDecompression(string inFileName, string outFileName) {}
 
-/* Main program that runs the uncompress */
+/* TODO: Main program that runs the uncompress */
 int main(int argc, char* argv[]) {
     cout << "Check the TODOs in 'uncompress.cpp'" << endl;
     return 0;

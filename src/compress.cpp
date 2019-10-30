@@ -17,7 +17,7 @@ void pseudoCompression(string inFileName, string outFileName) {}
 /* TODO: True compression with bitwise i/o and small header (final) */
 void trueCompression(string inFileName, string outFileName) {}
 
-/* Main program that runs the compress */
+/* TODO: Main program that runs the compress */
 int main(int argc, char* argv[]) {
     cout << "Check the TODOs in 'compress.cpp'" << endl;
     return 0;
