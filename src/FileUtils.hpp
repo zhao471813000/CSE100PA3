@@ -21,7 +21,7 @@ class FileUtils {
         return true;
     }
 
-    /* Check if in file is empty, if it is, output empty file */
+    /* Check if given file is empty */
     static bool isEmptyFile(string fileName) {
         ifstream inFile;
         // if the given file is empty, output empty file

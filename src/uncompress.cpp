@@ -18,7 +18,4 @@ void pseudoDecompression(string inFileName, string outFileName) {}
 void trueDecompression(string inFileName, string outFileName) {}
 
 /* TODO: Main program that runs the uncompress */
-int main(int argc, char* argv[]) {
-    cout << "Check the TODOs in 'uncompress.cpp'" << endl;
-    return 0;
-}
+int main(int argc, char* argv[]) { return 0; }
