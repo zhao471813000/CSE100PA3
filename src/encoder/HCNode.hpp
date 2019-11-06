@@ -1,7 +1,7 @@
 /**
- * TODO: file header
+ * This file implements HCNode.
  *
- * Author:
+ * Author: Dingqian Zhao A53319585, Kexin Hong A53311871
  */
 #ifndef HCNODE_HPP
 #define HCNODE_HPP
@@ -40,7 +40,15 @@ ostream& operator<<(ostream& stm, const HCNode& n) {
  * has higher prioruty.
  */
 struct HCNodePtrComp {
-    /* TODO */
-    bool operator()(HCNode*& lhs, HCNode*& rhs) const { return false; }
+    /* This is a comparator of HCNode pointer in struct HCNodePtrComp.
+       HCNode pointer points to a HCNode with lower count should have higher
+       priority. If count is the same, then larger ascii value symbol should
+       have higher priority. */
+    bool operator()(HCNode*& lhs, HCNode*& rhs) const {
+        if (lhs->count != rhs->count) {
+            return lhs->count > rhs->count;
+        }
+        return lhs->symbol < rhs->symbol;
+    }
 };
 #endif  // HCNODE_HPP

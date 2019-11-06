@@ -1,7 +1,7 @@
 /**
- * TODO: file header
+ * Implements Huffman Coding tree as the compression algorithm.
  *
- * Author:
+ * Author: Dingqian Zhao A53319585, Kexin Hong A53311871
  */
 #ifndef HCTREE_HPP
 #define HCTREE_HPP
@@ -15,33 +15,41 @@
 
 using namespace std;
 
-/** TODO: class header */
+typedef priority_queue<HCNode*, vector<HCNode*>, HCNodePtrComp> my_queue;
+
+/** Implements Huffman Coding tree as the compression algorithm. */
 class HCTree {
   private:
     HCNode* root;            // the root of HCTree
     vector<HCNode*> leaves;  // a vector storing pointers to all leaf HCNodes
 
   public:
-    /* TODO: add function header and implement */
-    HCTree() {}
+    /* Initializes a new empty HCTree. */
+    HCTree() : root(nullptr) {}
 
-    /* TODO: add function header */
+    /* Destructor for HCTree. */
     ~HCTree();
 
-    /* TODO: add function header */
+    /* Builds the HCTree from the given frequency vector. Assume the vector must
+     * have size 256 and each value at index i represents the frequency of char
+     * with ASCII value i. To improve performance, only non-zero frequency
+     * sysbol should be used to build the tree. The leaves vector must be
+     * updated so that it can be used in encode() to improve performance.*/
     void build(const vector<unsigned int>& freqs);
+
+    /* Write the encoding bits of given symbol to ostream. Writes each encoding
+     * bit as char of either '0' or '1' to the ostream. */
+    void encode(byte symbol, ostream& out) const;
+
+    /* Decode the sequence of bits(represented as char of either '0' or '1')from
+     * istream to return the coded symbol. */
+    byte decode(istream& in) const;
 
     /* TODO: add function header */
     void encode(byte symbol, BitOutputStream& out) const;
 
     /* TODO: add function header */
-    void encode(byte symbol, ostream& out) const;
-
-    /* TODO: add function header */
     byte decode(BitInputStream& in) const;
-
-    /* TODO: add function header */
-    byte decode(istream& in) const;
 };
 
 #endif  // HCTREE_HPP
