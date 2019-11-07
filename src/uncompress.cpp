@@ -37,27 +37,28 @@ void pseudoDecompression(string inFileName, string outFileName) {
         return;
     }
 
-    in.seekg(0, ios_base::beg);
-    vector<unsigned int> count(256, 0);
+    // in.seekg(0, ios_base::beg);
+    vector<unsigned int> freqs(256, 0);
 
     // read and rebuild
     int index = 0;
     int numChar = 0;
     for (int i = 0; i < 256; i++) {
-        count[i] = in.get();
-        numChar += count[i];
+        in >> freqs[i];
+        numChar += freqs[i];
     }
     HCTree tree;
-    tree.build(count);
+    tree.build(freqs);
 
     // Open the output file
     ofstream out;
-    out.open(outFileName, ios::binary);
+    out.open(outFileName, ios::binary | ios::trunc);
     byte symbol;
     while (numChar) {
-        if (!out.good()) break;
         symbol = tree.decode(in);
-        out.write((char*)symbol, sizeof(symbol));
+        if (!out.good()) break;
+
+        out << (char)symbol;
         numChar--;
     }
 
@@ -71,5 +72,6 @@ void trueDecompression(string inFileName, string outFileName) {}
 /* Main program that runs the uncompress */
 int main(int argc, char* argv[]) {
     pseudoDecompression(argv[1], argv[2]);
+    // pseudoDecompression("compressed.txt", "decompressed.txt");
     return 0;
 }
