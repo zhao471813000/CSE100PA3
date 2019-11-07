@@ -39,10 +39,10 @@ void pseudoCompression(string inFileName, string outFileName) {
         return;
     }
 
-    // 1. open
+    // open
     ifstream in;
     in.open(inFileName, ios::binary);
-    // 2. count symbols to get freqs
+    // count symbols to get freqs
     vector<unsigned int> freqs(256, 0);
     int numChars = 0;
     unsigned char ch;
@@ -52,24 +52,22 @@ void pseudoCompression(string inFileName, string outFileName) {
         freqs[(int)ch]++;
     }
     in.close();
-    // 3. build tree
+    // build tree
     HCTree tree;
     tree.build(freqs);
 
-    // 4. Open output file
+    // Open output file
     ofstream out;
-    out.open(outFileName, ios::trunc);
-
-    // 5. header
+    out.open(outFileName, ios::binary | ios::trunc);
+    // header
     for (int i = 0; i < 256; i++) {
-        out.write((const char*)(&freqs[i]), sizeof(freqs[i]));
-        out.put('\n');
+        // out.write((const char*)(&freqs[i]), sizeof(freqs[i]));
+        out << freqs[i];
+        out << '\n';
     }
-
+    byte symbol;
     // open file
     in.open(inFileName, ios::binary);
-
-    byte symbol;
     while (1) {
         symbol = in.get();
         if (!in.good()) break;
@@ -78,15 +76,14 @@ void pseudoCompression(string inFileName, string outFileName) {
 
     out.close();
     in.close();
-    return;
 }
 
 /* TODO: True compression with bitwise i/o and small header (final) */
 void trueCompression(string inFileName, string outFileName) {}
 
 /* Main program that runs the compress */
-int main(int argc, char* argv[]) {
+int main(int argc, char** argv) {
     pseudoCompression(argv[1], argv[2]);
-    // pseudoCompression("data/check5.txt", "compressed.txt");
+    //pseudoCompression("data/check2.txt", "compressed.txt");
     return 0;
 }
