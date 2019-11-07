@@ -21,12 +21,13 @@ typedef priority_queue<HCNode*, vector<HCNode*>, HCNodePtrComp> my_queue;
 /** Implements Huffman Coding tree as the compression algorithm. */
 class HCTree {
   private:
-    HCNode* root;            // the root of HCTree
-    vector<HCNode*> leaves;  // a vector storing pointers to all leaf HCNodes
+    // the root of HCTree
+    // vector<HCNode*> leaves;  // a vector storing pointers to all leaf HCNodes
+    HCNode* root;
 
     /* Decides whether the pointer points to a leaf. */
     bool isLeaf(HCNode* node) const;
-    void outCode(HCNode* node, ofstream& out);
+
     /* Store the code of each symbol in a lookup table--codeMap*/
     void buildCode(HCNode* node, string s);
     // unordered_map<byte, string> symbolToCodeMap;
@@ -35,7 +36,7 @@ class HCTree {
 
   public:
     /* Initializes a new empty HCTree. */
-    HCTree() : root(nullptr) { leaves = vector<HCNode*>(256, (HCNode*)0); }
+    HCTree() : root(0) {}
 
     /* Destructor for HCTree. */
     ~HCTree();

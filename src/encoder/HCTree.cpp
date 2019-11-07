@@ -21,40 +21,43 @@ void HCTree::build(const vector<unsigned int>& freqs) {
     my_queue pq;
     for (unsigned int i = 0; i < R; i++) {
         if (freqs[i] > 0) {
-            HCNode* n =
-                new HCNode(freqs[i], (byte)i, nullptr, nullptr, nullptr);
+            HCNode* n = new HCNode(freqs[i], i);
             pq.push(n);
             // leaves[i] = n;
         }
     }
-    if (pq.empty()) return;
-
-    // if (pq.size() == 1) {
-    //     // if only one node in priority queue, assign it to be left child
-    //     HCNode* left = pq.top();
-    //     pq.pop();
-    //     HCNode* root = new HCNode(left->count, left->symbol);
-    //     root->c0 = left;
-    //     left->p = root;
-    //     symbolToCodeMap.clear();
-    //     buildCode(root, "");
-    //     return;
-    // }
-    while (pq.size() > 1) {
+    if (pq.size() == 0) {
+        return;
+    } else if (pq.size() == 1) {
+        // if only one node in priority queue, assign it to be left child
         HCNode* left = pq.top();
         pq.pop();
-        HCNode* right = pq.top();
+        root = new HCNode(left->count, left->symbol);
+        root->c0 = left;
+        root->c1 = nullptr;
+        left->p = root;
+        symbolToCodeMap.clear();
+        symbolToCodeMap[left->symbol] = '0';
+        return;
+    } else {
+        while (pq.size() > 1) {
+            HCNode* left = pq.top();
+            pq.pop();
+            HCNode* right = pq.top();
+            pq.pop();
+            HCNode* parent =
+                new HCNode(left->count + right->count, left->symbol);
+            parent->c0 = left;
+            parent->c1 = right;
+            left->p = parent;
+            right->p = parent;
+            pq.push(parent);
+        }
+        root = pq.top();
         pq.pop();
-        HCNode* parent = new HCNode(left->count + right->count, left->symbol,
-                                    left, right, nullptr);
-        left->p = parent;
-        right->p = parent;
-        pq.push(parent);
+        symbolToCodeMap.clear();
+        buildCode(root, "");
     }
-    root = pq.top();
-    pq.pop();
-    symbolToCodeMap.clear();
-    buildCode(root, "");
 }
 
 /* Decides whether the pointer points to a leaf. */
@@ -113,7 +116,11 @@ void HCTree::deleteAll(HCNode* node) {
     if (node == nullptr) {
         return;
     }
-    deleteAll(node->c0);
-    deleteAll(node->c1);
+    if (node->c0) {
+        deleteAll(node->c0);
+    }
+    if (node->c1) {
+        deleteAll(node->c1);
+    }
     delete node;
 }

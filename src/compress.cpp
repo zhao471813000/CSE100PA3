@@ -53,10 +53,10 @@ void pseudoCompression(string inFileName, string outFileName) {
     }
     in.close();
     // 3. build tree
-    HCTree* tree;
-    tree->build(freqs);
+    HCTree tree;
+    tree.build(freqs);
 
-    // 4. Open output file for writing.
+    // 4. Open output file
     ofstream out;
     out.open(outFileName, ios::trunc);
 
@@ -73,12 +73,11 @@ void pseudoCompression(string inFileName, string outFileName) {
     while (1) {
         symbol = in.get();
         if (!in.good()) break;
-        tree->encode(symbol, out);
+        tree.encode(symbol, out);
     }
 
     out.close();
     in.close();
-    delete tree;
     return;
 }
 
@@ -88,5 +87,6 @@ void trueCompression(string inFileName, string outFileName) {}
 /* Main program that runs the compress */
 int main(int argc, char* argv[]) {
     pseudoCompression(argv[1], argv[2]);
+    // pseudoCompression("data/check5.txt", "compressed.txt");
     return 0;
 }
