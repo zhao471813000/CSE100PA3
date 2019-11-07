@@ -8,6 +8,7 @@
 
 #include <fstream>
 #include <queue>
+#include <unordered_map>
 #include <vector>
 #include "BitInputStream.hpp"
 #include "BitOutputStream.hpp"
@@ -23,9 +24,18 @@ class HCTree {
     HCNode* root;            // the root of HCTree
     vector<HCNode*> leaves;  // a vector storing pointers to all leaf HCNodes
 
+    /* Decides whether the pointer points to a leaf. */
+    bool isLeaf(HCNode* node) const;
+    void outCode(HCNode* node, ofstream& out);
+    /* Store the code of each symbol in a lookup table--codeMap*/
+    void buildCode(HCNode* node, string s);
+    // unordered_map<byte, string> symbolToCodeMap;
+    // unordered_map<string, byte> codeToSymbolMap;
+    void deleteAll(HCNode* node);
+
   public:
     /* Initializes a new empty HCTree. */
-    HCTree() : root(nullptr) {}
+    HCTree() : root(nullptr) { leaves = vector<HCNode*>(256, (HCNode*)0); }
 
     /* Destructor for HCTree. */
     ~HCTree();
