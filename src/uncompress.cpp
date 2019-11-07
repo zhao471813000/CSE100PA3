@@ -1,7 +1,7 @@
 /**
- * TODO: file header
+ * Uncompress file.
  *
- * Author:
+ * Author: Dingqian Zhao A53319585, Kexin Hong A53311871
  */
 #include <fstream>
 #include <iostream>
@@ -10,7 +10,7 @@
 #include "HCNode.hpp"
 #include "HCTree.hpp"
 
-/* TODO: Pseudo decompression with ascii encoding and naive header (checkpoint)
+/* Pseudo decompression with ascii encoding and naive header (checkpoint)
  */
 void pseudoDecompression(string inFileName, string outFileName) {}
 

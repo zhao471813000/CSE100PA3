@@ -4,6 +4,8 @@
  * Author: Dingqian Zhao A53319585, Kexin Hong A53311871
  */
 #include "HCTree.hpp"
+#include "HCNode.hpp"
+
 const unsigned int R = 256;
 unordered_map<byte, string> symbolToCodeMap;
 
@@ -27,15 +29,17 @@ void HCTree::build(const vector<unsigned int>& freqs) {
     }
     if (pq.empty()) return;
 
-    /*if (pq.size() == 1) {
-        // if only one node in priority queue, assign it to be left child
-        HCNode* left = pq.top();
-        pq.pop();
-        HCNode* parent = new HCNode(left->count, left->symbol);
-        parent->c0 = left;
-        left->p = parent;
-        pq.push(parent);
-    }*/
+    // if (pq.size() == 1) {
+    //     // if only one node in priority queue, assign it to be left child
+    //     HCNode* left = pq.top();
+    //     pq.pop();
+    //     HCNode* root = new HCNode(left->count, left->symbol);
+    //     root->c0 = left;
+    //     left->p = root;
+    //     symbolToCodeMap.clear();
+    //     buildCode(root, "");
+    //     return;
+    // }
     while (pq.size() > 1) {
         HCNode* left = pq.top();
         pq.pop();

@@ -2,6 +2,10 @@
     "editor.formatOnSave": true,
     "gitlens.blame.compact": false,
     "files.associations": {
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "vector": "cpp",
+        "iosfwd": "cpp",
+        "fstream": "cpp",
+        "*.tcc": "cpp"
     }
 }

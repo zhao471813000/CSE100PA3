@@ -50,6 +50,48 @@ TEST_F(SimpleHCTreeFixture, TEST_DECODE) {
     delete tree;
 }
 
+class ComplexHCTreeFixture : public ::testing::Test {
+  protected:
+    HCTree* tree2;
+
+  public:
+    ComplexHCTreeFixture() {
+        // initialization code here
+        tree2 = new HCTree();
+        vector<unsigned int> freqs(256);
+        freqs['a'] = 10;
+        freqs['b'] = 10;
+        freqs['c'] = 10;
+        freqs['d'] = 10;
+        freqs['e'] = 10;
+        tree2->build(freqs);
+    }
+};
+
+TEST_F(ComplexHCTreeFixture, TEST_ENCODE) {
+    ostringstream os1;
+    ostringstream os2;
+    ostringstream os3;
+    ostringstream os4;
+    ostringstream os5;
+    tree2->encode('a', os1);
+    ASSERT_EQ(os1.str(), "10");
+    tree2->encode('b', os2);
+    ASSERT_EQ(os2.str(), "01");
+    tree2->encode('c', os3);
+    ASSERT_EQ(os3.str(), "00");
+    tree2->encode('d', os4);
+    ASSERT_EQ(os4.str(), "111");
+    tree2->encode('e', os5);
+    ASSERT_EQ(os5.str(), "110");
+}
+
+TEST_F(ComplexHCTreeFixture, TEST_DECODE) {
+    istringstream is2("111");
+    ASSERT_EQ(tree2->decode(is2), 'd');
+    delete tree2;
+}
+
 // class OneHCTreeFixture : public ::testing::Test {
 //   protected:
 //     HCTree* tree;
