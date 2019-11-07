@@ -10,18 +10,6 @@
 #include "HCNode.hpp"
 #include "HCTree.hpp"
 
-bool isEmptyFile(string fileName) {
-    ifstream inFile;
-    // if the given file is empty, output empty file
-    inFile.open(fileName, ios::binary);
-    inFile.get();
-    if (inFile.eof()) {
-        inFile.close();
-        return true;
-    }
-    inFile.close();
-    return false;
-}
 /* Pseudo decompression with ascii encoding and naive header (checkpoint)
  */
 void pseudoDecompression(string inFileName, string outFileName) {
@@ -30,13 +18,14 @@ void pseudoDecompression(string inFileName, string outFileName) {
     in.open(inFileName, ios::binary);
 
     // check empty file
-    if (isEmptyFile(inFileName)) {
+    in.seekg(0, ios_base::end);
+    unsigned int len = in.tellg();
+    if (len == 0) {
         ofstream out;
         out.open(outFileName, ios::binary);
         out.close();
         return;
     }
-
     // in.seekg(0, ios_base::beg);
     vector<unsigned int> freqs(256, 0);
 

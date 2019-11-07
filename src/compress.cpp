@@ -12,32 +12,12 @@
 
 using namespace std;
 
-bool isEmptyFile(string fileName) {
-    ifstream inFile;
-    // if the given file is empty, output empty file
-    inFile.open(fileName, ios::binary);
-    inFile.get();
-    if (inFile.eof()) {
-        inFile.close();
-        return true;
-    }
-    inFile.close();
-    return false;
-}
 /* Pseudo compression with ascii encoding and naive header
  * (checkpoint) */
 void pseudoCompression(string inFileName, string outFileName) {
     unsigned int size = 256;
     string infile(inFileName);
     string outfile(outFileName);
-
-    // check empty file
-    if (isEmptyFile(inFileName)) {
-        ofstream out;
-        out.open(outFileName, ios::binary);
-        out.close();
-        return;
-    }
 
     // open
     ifstream in;
@@ -46,12 +26,21 @@ void pseudoCompression(string inFileName, string outFileName) {
     vector<unsigned int> freqs(256, 0);
     int numChars = 0;
     unsigned char ch;
+    int isEmpty = 1;
     while (1) {
         ch = in.get();
         if (!in.good()) break;
         freqs[(int)ch]++;
+        isEmpty = 0;
     }
     in.close();
+    // check empty file
+    if (isEmpty) {
+        ofstream out;
+        out.open(outFileName, ios::binary);
+        out.close();
+        return;
+    }
     // build tree
     HCTree tree;
     tree.build(freqs);
@@ -84,6 +73,6 @@ void trueCompression(string inFileName, string outFileName) {}
 /* Main program that runs the compress */
 int main(int argc, char** argv) {
     pseudoCompression(argv[1], argv[2]);
-    //pseudoCompression("data/check2.txt", "compressed.txt");
+    // pseudoCompression("data/check3.txt", "compressed.txt");
     return 0;
 }
