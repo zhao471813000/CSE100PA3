@@ -18,15 +18,13 @@ void pseudoDecompression(string inFileName, string outFileName) {
     in.open(inFileName, ios::binary);
 
     // check empty file
-    in.seekg(0, ios_base::end);
-    unsigned int len = in.tellg();
-    if (len == 0) {
+    FileUtils fileutils;
+    if (fileutils.isEmptyFile(inFileName)) {
         ofstream out;
-        out.open(outFileName, ios::binary);
+        out.open(outFileName, ios::binary | ios::trunc);
         out.close();
         return;
     }
-    // in.seekg(0, ios_base::beg);
     vector<unsigned int> freqs(256, 0);
 
     // read and rebuild
@@ -45,8 +43,7 @@ void pseudoDecompression(string inFileName, string outFileName) {
     byte symbol;
     while (numChar) {
         symbol = tree.decode(in);
-        if (!out.good()) break;
-
+        if (out.eof()) break;
         out << (char)symbol;
         numChar--;
     }
