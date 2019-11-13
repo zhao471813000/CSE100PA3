@@ -24,6 +24,41 @@ class SimpleHCTreeFixture : public ::testing::Test {
         tree.build(freqs);
     }
 };
+TEST_F(SimpleHCTreeFixture, TEST_Serial) {
+    tree.serial();
+    vector<int> expectedChildState = {0, 1, 1, 0, 1, 0, 0, 1, 0, 0};
+    vector<int> returnChildState = tree.getChildState();
+    vector<char> expectedSymbolVec = {'b', 'e', 'a', 'c', 'd'};
+    vector<char> returnSymbolVec = tree.getSymbolVec();
+
+    ASSERT_EQ(expectedChildState, returnChildState);
+    ASSERT_EQ(expectedSymbolVec, returnSymbolVec);
+}
+
+class ReconstructHCTreeFixture : public ::testing::Test {
+  protected:
+    HCTree tree;
+
+  public:
+    ReconstructHCTreeFixture() {
+        // initialization code here
+        vector<int> ChildState = {0, 1, 1, 0, 1, 0, 0, 1, 0, 0};
+        vector<char> symbolVec = {'b', 'e', 'a', 'c', 'd'};
+        tree.reconstruct(ChildState, symbolVec);
+    }
+};
+TEST_F(ReconstructHCTreeFixture, TEST_RECONSTRUCT) {
+    istringstream is("11");
+    ASSERT_EQ(tree.decode(is), 'd');
+    istringstream is1("010");
+    ASSERT_EQ(tree.decode(is1), 'e');
+    istringstream is2("011");
+    ASSERT_EQ(tree.decode(is2), 'a');
+    istringstream is3("00");
+    ASSERT_EQ(tree.decode(is3), 'b');
+    istringstream is4("10");
+    ASSERT_EQ(tree.decode(is4), 'c');
+}
 
 TEST_F(SimpleHCTreeFixture, TEST_ENCODE) {
     ostringstream os1;
@@ -94,4 +129,33 @@ TEST_F(ComplexHCTreeFixture, TEST_ENCODE) {
 TEST_F(ComplexHCTreeFixture, TEST_DECODE) {
     istringstream is2("111");
     ASSERT_EQ(tree2.decode(is2), 'd');
+}
+class SpecialHCTreeFixture : public ::testing::Test {
+  protected:
+    HCTree tree3;
+
+  public:
+    SpecialHCTreeFixture() {
+        // initialization code here
+        vector<unsigned int> freqs(256);
+        freqs['a'] = 10;
+        tree3.build(freqs);
+    }
+};
+
+TEST_F(SpecialHCTreeFixture, TEST_Oneleaf) {
+    ostringstream os;
+    tree3.encode('a', os);
+    ASSERT_EQ(os.str(), "0");
+    istringstream is("0");
+    ASSERT_EQ(tree3.decode(is), 'a');
+
+    tree3.serial();
+    vector<int> expectedChildState = {1};
+    vector<int> returnChildState = tree3.getChildState();
+    vector<char> expectedSymbolVec = {'a'};
+    vector<char> returnSymbolVec = tree3.getSymbolVec();
+
+    ASSERT_EQ(expectedChildState, returnChildState);
+    ASSERT_EQ(expectedSymbolVec, returnSymbolVec);
 }

@@ -21,9 +21,16 @@ typedef priority_queue<HCNode*, vector<HCNode*>, HCNodePtrComp> my_queue;
 /** Implements Huffman Coding tree as the compression algorithm. */
 class HCTree {
   private:
-    // the root of HCTree
-    // vector<HCNode*> leaves;  // a vector storing pointers to all leaf HCNodes
-    HCNode* root;
+    HCNode* root;  // the root of HCTree
+
+    /* childState and symbolVec are used in header optimization part.
+       For childState, index 0 position is used for special case: whether this
+       tree only has one leaf: 0 is negative(common case), 1 is special case.
+       Besides, for the rest parts in childState, if a node has two children,
+       then the corresponding postion in vector is 1; otherwise 0.
+       SymbolVec is used to store the symbols in leaves. */
+    vector<int> childState;
+    vector<char> symbolVec;
 
     /* Decides whether the pointer points to a leaf. */
     bool isLeaf(HCNode* node) const;
@@ -31,15 +38,37 @@ class HCTree {
     /* Store the code of each symbol in a lookup table--codeMap*/
     void buildCode(HCNode* node, string s);
     // unordered_map<byte, string> symbolToCodeMap;
-    // unordered_map<string, byte> codeToSymbolMap;
+
+    /* DeleteAll is helper function of destructor.*/
     void deleteAll(HCNode* node);
+
+    /* Serializes the HCTree. */
+    void serialHelper(HCNode* node);
+
+    /* Reconstructs Helper the HCTree. */
+    HCNode* reconstructHelper(vector<int> childState, vector<char> symbolVec,
+                              int& cindex, int& sindex);
 
   public:
     /* Initializes a new empty HCTree. */
-    HCTree() : root(0) {}
+    HCTree() : root(0) {
+        vector<int> childState;
+        vector<char> symbolVec;
+    }
+
+    /* Reconstructs the HCTree. */
+    void reconstruct(vector<int> childState, vector<char> symbolVec);
 
     /* Destructor for HCTree. */
     ~HCTree();
+    /* Serializes a Huffman Tree.*/
+    void serial();
+
+    /* Returns childState vector.*/
+    vector<int> getChildState() { return childState; }
+
+    /* Returns symbolVec vector.*/
+    vector<char> getSymbolVec() { return symbolVec; }
 
     /* Builds the HCTree from the given frequency vector. Assume the vector must
      * have size 256 and each value at index i represents the frequency of char

@@ -120,6 +120,64 @@ byte HCTree::decode(BitInputStream& in) const {
     }
     return curr->symbol;
 }
+/* Serializes HCtree.*/
+void HCTree::serial() {
+    if (root->c0 != nullptr &&
+        root->c1 == nullptr) {  // special case, only one leaf
+        childState.push_back(1);
+        symbolVec.push_back(root->c0->symbol);
+    } else {
+        childState.push_back(0);
+        serialHelper(root);
+    }
+}
+/* Serial helper to do preorder traverse using recursion.*/
+void HCTree::serialHelper(HCNode* node) {
+    if (isLeaf(node)) {
+        symbolVec.push_back(node->symbol);
+        childState.push_back(0);
+        return;
+    } else {
+        childState.push_back(1);
+    }
+    serialHelper(node->c0);
+    serialHelper(node->c1);
+}
+/* Reconstructs the HCTree.
+   count all set to 1, internal nodes symbol sets to ' ' empty space. */
+void HCTree::reconstruct(vector<int> childState, vector<char> symbolVec) {
+    if (childState[0] == 1) {
+        // root only has one left leaf --special case
+        HCNode* left = new HCNode(1, symbolVec[0]);
+        root = new HCNode(1, ' ');
+        root->c0 = left;
+        left->p = root;
+        return;
+    } else {
+        int cindex = 1;
+        int sindex = 0;
+        root = reconstructHelper(childState, symbolVec, cindex, sindex);
+    }
+}
+
+/* Reconstructs Helper the HCTree. */
+HCNode* HCTree::reconstructHelper(vector<int> childState,
+                                  vector<char> symbolVec, int& cindex,
+                                  int& sindex) {
+    if (childState[cindex] == 0) {
+        HCNode* curr = new HCNode(1, symbolVec[sindex]);
+        sindex++;
+        return curr;
+    } else {
+        HCNode* curr = new HCNode(1, ' ');
+        cindex++;
+        curr->c0 = reconstructHelper(childState, symbolVec, cindex, sindex);
+
+        cindex++;
+        curr->c1 = reconstructHelper(childState, symbolVec, cindex, sindex);
+        return curr;
+    }
+}
 
 void HCTree::deleteAll(HCNode* node) {
     if (node == nullptr) {
