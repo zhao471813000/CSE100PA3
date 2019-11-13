@@ -9,6 +9,7 @@
 #include "FileUtils.hpp"
 #include "HCNode.hpp"
 #include "HCTree.hpp"
+#include "cxxopts.hpp"
 
 /* Pseudo decompression with ascii encoding and naive header (checkpoint)
  */
@@ -43,7 +44,7 @@ void pseudoDecompression(string inFileName, string outFileName) {
     byte symbol;
     while (numChar) {
         symbol = tree.decode(in);
-        if (out.eof()) break;
+        if (in.eof()) break;
         out << (char)symbol;
         numChar--;
     }
@@ -52,12 +53,76 @@ void pseudoDecompression(string inFileName, string outFileName) {
     out.close();
 }
 
-/* TODO: True decompression with bitwise i/o and small header (final) */
-void trueDecompression(string inFileName, string outFileName) {}
+/* True decompression with bitwise i/o and small header (final) */
+void trueDecompression(string inFileName, string outFileName) {
+    // open
+    ifstream in;
+    in.open(inFileName, ios::binary);
+
+    // check empty file
+    FileUtils fileutils;
+    if (fileutils.isEmptyFile(inFileName)) {
+        ofstream out;
+        out.open(outFileName, ios::binary | ios::trunc);
+        out.close();
+        return;
+    }
+
+    // read and rebuild
+    int index = 0;
+    int numChar = 0;
+    vector<unsigned int> freqs(256, 0);
+    for (int i = 0; i < 256; i++) {
+        in >> freqs[i];
+        numChar += freqs[i];
+    }
+    HCTree tree;
+    tree.build(freqs);
+
+    // Open the output file
+    ofstream out;
+    byte symbol;
+    out.open(outFileName, ios::binary | ios::trunc);
+    BitInputStream is(in);
+    in.get();
+    for (int i = 0; i < numChar; i++) {
+        symbol = tree.decode(is);
+        if (in.eof()) break;
+        out << (char)symbol;
+    }
+
+    in.close();
+    out.close();
+}
 
 /* Main program that runs the uncompress */
 int main(int argc, char* argv[]) {
-    pseudoDecompression(argv[1], argv[2]);
-    // pseudoDecompression("compressed.txt", "decompressed.txt");
+    // do option parsing with cxxopts
+    // cxxopts::Options options("./decompress",
+    //                          "Decompresses files using Huffman Encoding");
+    // options.positional_help("./path_to_input_file ./path_to_output_file");
+    // bool isAsciiOutput = false;
+    // string inFileName, outFileName;
+    // options.allow_unrecognised_options().add_options()(
+    //     "ascii", "Write output in ascii mode instead of bit stream",
+    //     cxxopts::value<bool>(isAsciiOutput))(
+    //     "input", "", cxxopts::value<string>(inFileName))(
+    //     "output", "", cxxopts::value<string>(outFileName))(
+    //     "h,help", "Print help and exit");
+    // options.parse_positional({"input", "output"});
+    // auto userOptions = options.parse(argc, argv);
+    // if (userOptions.count("help") || !FileUtils ::isValidFile(inFileName) ||
+    //     outFileName.empty()) {
+    //     cout << options.help({""}) << std ::endl;
+    //     exit(0);
+    // }
+    bool isAsciiOutput = false;
+    if (isAsciiOutput) {
+        pseudoDecompression(argv[2], argv[3]);
+        // pseudoCompression("data/check1.txt", "compressed.txt");
+    } else {
+        // trueDecompression(argv[1], argv[2]);
+        trueDecompression("compressed.txt", "decompressed.txt");
+    }
     return 0;
 }

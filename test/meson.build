@@ -13,3 +13,8 @@ test_HCTree_exe = executable ('test_HCTree.cpp.executable',
     sources: ['test_HCTree.cpp'],
     dependencies : [encoder_dep, gtest_dep])
 test('my HCTree test', test_HCTree_exe)
+
+test_HCNode_exe = executable ('test_HCNode.cpp.executable',
+    sources: ['test_HCNode.cpp'],
+    dependencies : [encoder_dep, gtest_dep])
+test('my HCNode test', test_HCNode_exe)

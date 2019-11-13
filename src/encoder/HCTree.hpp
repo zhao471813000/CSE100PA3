@@ -56,7 +56,8 @@ class HCTree {
      * istream to return the coded symbol. */
     byte decode(istream& in) const;
 
-    /* TODO: add function header */
+    /* Writes the encoding bits of given symbol to the given BitOutputStream.
+     * For this function, comprehensive search is not allowed. */
     void encode(byte symbol, BitOutputStream& out) const;
 
     /* TODO: add function header */

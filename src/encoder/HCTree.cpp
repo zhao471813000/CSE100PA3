@@ -69,7 +69,6 @@ bool HCTree::isLeaf(HCNode* node) const {
 void HCTree::buildCode(HCNode* node, string s) {
     if (isLeaf(node)) {
         symbolToCodeMap[node->symbol] = s;
-        // codeToSymbolMap[s] = node->symbol;
         return;
     }
     buildCode(node->c0, s + '0');
@@ -92,25 +91,35 @@ byte HCTree::decode(istream& in) const {
     HCNode* curr = root;
     while (!isLeaf(curr)) {
         chr = in.get();
-        if (in.eof()) {
-            return ' ';
-        }
-        if (chr == '0') {
+        if (chr == '0')
             curr = curr->c0;
-        }
-
-        else if (chr == '1') {
+        else if (chr == '1')
             curr = curr->c1;
-        }
     }
     return curr->symbol;
 }
 
-/* TODO */
-void HCTree::encode(byte symbol, BitOutputStream& out) const {}
+/* Writes the encoding bits of given symbol to the given BitOutputStream. For
+ * this function, comprehensive search is not allowed. */
+void HCTree::encode(byte symbol, BitOutputStream& out) const {
+    string str = symbolToCodeMap[symbol];
+    for (char ch : str) {
+        if (ch == '0') out.writeBit(0);
+        if (ch == '1') out.writeBit(1);
+    }
+}
 
-/* TODO */
-byte HCTree::decode(BitInputStream& in) const { return ' '; }
+/* Decodes the sequence of bits from the given BitInputStream to return coded
+ * symbol. */
+byte HCTree::decode(BitInputStream& in) const {
+    HCNode* curr = root;
+    while (!isLeaf(curr)) {
+        unsigned int i = in.readBit();
+        if (i == 0) curr = curr->c0;
+        if (i == 1) curr = curr->c1;
+    }
+    return curr->symbol;
+}
 
 void HCTree::deleteAll(HCNode* node) {
     if (node == nullptr) {

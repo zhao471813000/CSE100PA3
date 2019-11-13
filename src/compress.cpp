@@ -9,6 +9,7 @@
 #include "FileUtils.hpp"
 #include "HCNode.hpp"
 #include "HCTree.hpp"
+#include "cxxopts.hpp"
 
 using namespace std;
 
@@ -41,8 +42,8 @@ void pseudoCompression(string inFileName, string outFileName) {
     // build tree
     HCTree tree;
     tree.build(freqs);
-
     in.close();
+
     // Open output file
     ofstream out;
     out.open(outFileName, ios::binary | ios::trunc);
@@ -65,11 +66,86 @@ void pseudoCompression(string inFileName, string outFileName) {
 }
 
 /* True compression with bitwise i/o and small header (final) */
-void trueCompression(string inFileName, string outFileName) {}
+void trueCompression(string inFileName, string outFileName) {
+    unsigned int size = 256;
+    // check empty files
+    FileUtils fileutils;
+    if (fileutils.isEmptyFile(inFileName)) {
+        ofstream out;
+        out.open(outFileName, ios::binary | ios::trunc);
+        out.close();
+        return;
+    }
+    ifstream in;
+    in.open(inFileName, ios::binary);
+
+    // count symbols to get freqs
+    vector<unsigned int> freqs(256, 0);
+    int numChars = 0;
+    unsigned char ch;
+    while (1) {
+        ch = in.get();
+        if (in.eof()) break;
+        freqs[(int)ch]++;
+    }
+    in.close();
+    // build tree
+    HCTree tree;
+    tree.build(freqs);
+
+    // Open output file
+    // print header
+    ofstream out;
+    out.open(outFileName, ios::binary | ios::trunc);
+    for (int i = 0; i < 256; i++) {
+        out << freqs[i];
+        // out.write((char*)&freqs[i], sizeof(freqs[i]));
+        out << '\n';
+    }
+
+    // open input file to encode
+    byte symbol;
+    in.open(inFileName, ios::binary);
+    BitOutputStream os(out);
+    while (1) {
+        symbol = in.get();
+        if (in.eof()) break;
+        tree.encode(symbol, os);
+    }
+    os.flush();
+
+    out.close();
+    in.close();
+}
 
 /* Main program that runs the compress */
 int main(int argc, char** argv) {
-    pseudoCompression(argv[1], argv[2]);
-    // pseudoCompression("data/check1.txt", "compressed.txt");
+    // do option parsing with cxxopts
+    // cxxopts::Options options("./compress",
+    //                          "Compresses files using Huffman Encoding");
+    // options.positional_help("./path_to_input_file ./path_to_output_file");
+    // bool isAsciiOutput = false;
+    // string inFileName, outFileName;
+    // options.allow_unrecognised_options().add_options()(
+    //     "ascii", "Write output in ascii mode instead of bit stream",
+    //     cxxopts::value<bool>(isAsciiOutput))(
+    //     "input", "", cxxopts::value<string>(inFileName))(
+    //     "output", "", cxxopts::value<string>(outFileName))(
+    //     "h,help", "Print help and exit");
+    // options.parse_positional({"input", "output"});
+    // auto userOptions = options.parse(argc, argv);
+    // if (userOptions.count("help") || !FileUtils ::isValidFile(inFileName) ||
+    //     outFileName.empty()) {
+    //     cout << options.help({""}) << std ::endl;
+    //     exit(0);
+    // }
+    bool isAsciiOutput = false;
+    if (isAsciiOutput) {
+        pseudoCompression(argv[2], argv[3]);
+        // pseudoCompression("data/check1.txt", "compressed.txt");
+    } else {
+        // trueCompression(argv[1], argv[2]);
+        trueCompression("data/warandpeace.txt", "compressed.txt");
+    }
     return 0;
 }

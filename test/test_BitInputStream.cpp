@@ -7,14 +7,20 @@
 using namespace std;
 using namespace testing;
 
-// TEST(BitInputStreamTests, SIMPLE_TEST) {
-//     string bitsStr = "10000000";
-//     string ascii = string(1, stoi(bitsStr, nullptr, 2));
+TEST(BitInputStreamTests, SIMPLE_TEST) {
+    string bitsStr = "10000011";  // 10-bit
 
-//     stringstream ss;
-//     ss.str(ascii);
-//     BitInputStream bis(ss);
+    string ascii = string(1, stoi(bitsStr, nullptr, 2));
 
-//     ASSERT_EQ(1, bis.readBit());
-//     ASSERT_EQ(0, bis.readBit());
-// }
+    stringstream ss;
+    ss.str(ascii);
+    BitInputStream bis(ss);
+
+    ASSERT_EQ(1, bis.readBit());
+    for (int i = 0; i < 5; i++) {
+        ASSERT_EQ(0, bis.readBit());
+    }
+    // after 8 bits, buffer is filled again
+    ASSERT_EQ(1, bis.readBit());
+    ASSERT_EQ(1, bis.readBit());
+}
