@@ -121,31 +121,30 @@ void trueCompression(string inFileName, string outFileName) {
 /* Main program that runs the compress */
 int main(int argc, char** argv) {
     // do option parsing with cxxopts
-    // cxxopts::Options options("./compress",
-    //                          "Compresses files using Huffman Encoding");
-    // options.positional_help("./path_to_input_file ./path_to_output_file");
-    // bool isAsciiOutput = false;
-    // string inFileName, outFileName;
-    // options.allow_unrecognised_options().add_options()(
-    //     "ascii", "Write output in ascii mode instead of bit stream",
-    //     cxxopts::value<bool>(isAsciiOutput))(
-    //     "input", "", cxxopts::value<string>(inFileName))(
-    //     "output", "", cxxopts::value<string>(outFileName))(
-    //     "h,help", "Print help and exit");
-    // options.parse_positional({"input", "output"});
-    // auto userOptions = options.parse(argc, argv);
-    // if (userOptions.count("help") || !FileUtils ::isValidFile(inFileName) ||
-    //     outFileName.empty()) {
-    //     cout << options.help({""}) << std ::endl;
-    //     exit(0);
-    // }
+    cxxopts::Options options("./compress",
+                             "Compresses files using Huffman Encoding");
+    options.positional_help("./path_to_input_file ./path_to_output_file");
     bool isAsciiOutput = false;
+    string inFileName, outFileName;
+    options.allow_unrecognised_options().add_options()(
+        "ascii", "Write output in ascii mode instead of bit stream",
+        cxxopts::value<bool>(isAsciiOutput))(
+        "input", "", cxxopts::value<string>(inFileName))(
+        "output", "", cxxopts::value<string>(outFileName))(
+        "h,help", "Print help and exit");
+    options.parse_positional({"input", "output"});
+    auto userOptions = options.parse(argc, argv);
+    if (userOptions.count("help") || !FileUtils ::isValidFile(inFileName) ||
+        outFileName.empty()) {
+        cout << options.help({""}) << std ::endl;
+        exit(0);
+    }
     if (isAsciiOutput) {
         pseudoCompression(argv[2], argv[3]);
         // pseudoCompression("data/check1.txt", "compressed.txt");
     } else {
-        // trueCompression(argv[1], argv[2]);
-        trueCompression("data/warandpeace.txt", "compressed.txt");
+        trueCompression(argv[1], argv[2]);
+        // trueCompression("data/warandpeace.txt", "compressed.txt");
     }
     return 0;
 }
