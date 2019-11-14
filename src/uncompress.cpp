@@ -69,23 +69,42 @@ void trueDecompression(string inFileName, string outFileName) {
     }
 
     // read and rebuild
-    int index = 0;
-    int numChar = 0;
-    vector<unsigned int> freqs(256, 0);
-    for (int i = 0; i < 256; i++) {
-        in >> freqs[i];
-        numChar += freqs[i];
+    int numNode;
+    int numSymbol;
+    int numChars;
+    in.read((char*)&numNode, sizeof(numNode));
+    in.read((char*)&numSymbol, sizeof(numSymbol));
+    in.read((char*)&numChars, sizeof(numChars));
+    vector<int> childState;
+    vector<char> symbolVec;
+    BitInputStream ish(in);
+    for (int i = 0; i < numNode; i++) {
+        int temp = ish.readBit();
+        childState.push_back(temp);
     }
+    for (int i = 0; i < numSymbol; i++) {
+        char c;
+        in.read((char*)&c, sizeof(c));
+        symbolVec.push_back(c);
+    }
+    // int index = 0;
+    // int numChar = 0;
+    // vector<unsigned int> freqs(256, 0);
+    // for (int i = 0; i < 256; i++) {
+    //     in >> freqs[i];
+    //     numChar += freqs[i];
+    // }
     HCTree tree;
-    tree.build(freqs);
+    // tree.build(freqs);
+    tree.reconstruct(childState, symbolVec);
 
     // Open the output file
     ofstream out;
     byte symbol;
     out.open(outFileName, ios::binary | ios::trunc);
     BitInputStream is(in);
-    in.get();
-    for (int i = 0; i < numChar; i++) {
+    // in.get();
+    for (int i = 0; i < numChars; i++) {
         symbol = tree.decode(is);
         if (in.eof()) break;
         out << (char)symbol;
@@ -116,6 +135,7 @@ int main(int argc, char* argv[]) {
         cout << options.help({""}) << std ::endl;
         exit(0);
     }
+    // bool isAsciiOutput = false;
     if (isAsciiOutput) {
         pseudoDecompression(argv[2], argv[3]);
         // pseudoCompression("data/check1.txt", "compressed.txt");

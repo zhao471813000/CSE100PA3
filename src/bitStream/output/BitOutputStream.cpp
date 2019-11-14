@@ -12,7 +12,7 @@
  * further use. */
 void BitOutputStream::flush() {
     out.put(buf);
-    out.flush();
+    // out.flush();
     buf = 0;
     nbits = 0;
 }

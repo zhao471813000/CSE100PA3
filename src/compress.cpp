@@ -83,12 +83,14 @@ void trueCompression(string inFileName, string outFileName) {
     vector<unsigned int> freqs(256, 0);
     int numChars = 0;
     unsigned char ch;
-    // while (1) {
-    //     ch = in.get();
-    //     if (in.eof()) break;
-    //     freqs[(int)ch]++;
-    // }
-    freqs[]
+    while (1) {
+        ch = in.get();
+        if (in.eof()) break;
+        freqs[(int)ch]++;
+        numChars++;
+    }
+    // freqs[10] = 0;
+    // freqs[97] = freqs[98] = freqs[99] = freqs[100] = 1;
     in.close();
     // build tree
     HCTree tree;
@@ -97,28 +99,33 @@ void trueCompression(string inFileName, string outFileName) {
     tree.serial();
     vector<int> childState = tree.getChildState();
     vector<char> symbolVec = tree.getSymbolVec();
+    int numNode = childState.size();
+    int numSymbol = symbolVec.size();
     // Open output file
     // print header
     ofstream out;
-    BitOutputStream osh(out);
     out.open(outFileName, ios::binary | ios::trunc);
+    out.write((char*)&numNode, sizeof(numNode));
+    out.write((char*)&numSymbol, sizeof(numSymbol));
+    out.write((char*)&numChars, sizeof(numChars));
+    BitOutputStream osh(out);
+
     for (int i : childState) {
         osh.writeBit(i);
     }
     osh.flush();  // write out unflush bits
-    out << '\n';
 
     for (char c : symbolVec) {
-        out.write((const char*)&c, sizeof(c));
+        out.write((char*)&c, sizeof(c));
     }
-    out << '\n';
 
     // open input file to encode
     byte symbol;
+    // ifstream in;
     in.open(inFileName, ios::binary);
     BitOutputStream os(out);
     while (1) {
-        symbol = in.get();
+        symbol = (unsigned char)in.get();
         if (in.eof()) break;
         tree.encode(symbol, os);
     }
@@ -131,31 +138,31 @@ void trueCompression(string inFileName, string outFileName) {
 /* Main program that runs the compress */
 int main(int argc, char** argv) {
     // do option parsing with cxxopts
-    // cxxopts::Options options("./compress",
-    //                          "Compresses files using Huffman Encoding");
-    // options.positional_help("./path_to_input_file ./path_to_output_file");
-    // bool isAsciiOutput = false;
-    // string inFileName, outFileName;
-    // options.allow_unrecognised_options().add_options()(
-    //     "ascii", "Write output in ascii mode instead of bit stream",
-    //     cxxopts::value<bool>(isAsciiOutput))(
-    //     "input", "", cxxopts::value<string>(inFileName))(
-    //     "output", "", cxxopts::value<string>(outFileName))(
-    //     "h,help", "Print help and exit");
-    // options.parse_positional({"input", "output"});
-    // auto userOptions = options.parse(argc, argv);
-    // if (userOptions.count("help") || !FileUtils ::isValidFile(inFileName) ||
-    //     outFileName.empty()) {
-    //     cout << options.help({""}) << std ::endl;
-    //     exit(0);
-    // }
+    cxxopts::Options options("./compress",
+                             "Compresses files using Huffman Encoding");
+    options.positional_help("./path_to_input_file ./path_to_output_file");
     bool isAsciiOutput = false;
+    string inFileName, outFileName;
+    options.allow_unrecognised_options().add_options()(
+        "ascii", "Write output in ascii mode instead of bit stream",
+        cxxopts::value<bool>(isAsciiOutput))(
+        "input", "", cxxopts::value<string>(inFileName))(
+        "output", "", cxxopts::value<string>(outFileName))(
+        "h,help", "Print help and exit");
+    options.parse_positional({"input", "output"});
+    auto userOptions = options.parse(argc, argv);
+    if (userOptions.count("help") || !FileUtils ::isValidFile(inFileName) ||
+        outFileName.empty()) {
+        cout << options.help({""}) << std ::endl;
+        exit(0);
+    }
+    // bool isAsciiOutput = false;
     if (isAsciiOutput) {
         pseudoCompression(argv[2], argv[3]);
         // pseudoCompression("data/check1.txt", "compressed.txt");
     } else {
-        // trueCompression(argv[1], argv[2]);
-        trueCompression("data/check1.txt", "compressed.txt");
+        trueCompression(argv[1], argv[2]);
+        // trueCompression("data/warandpeace.txt", "compressed.txt");
     }
     return 0;
 }
