@@ -1,8 +1,11 @@
 /**
  * Uncompress file.
+ * Pseudo decompression with ascii encoding and naive header is for checkpoint,
+ * and True decompression with bitwise i/o and small header is for final.
  *
- * Author: Dingqian Zhao A53319585, Kexin Hong A53311871
+ * Author: Dingqian Zhao A53319585, Kexin Hong A53311871.
  */
+
 #include <fstream>
 #include <iostream>
 
@@ -68,11 +71,13 @@ void trueDecompression(string inFileName, string outFileName) {
         return;
     }
 
-    // read and rebuild
+    // read from header
     int numNode;
     int numSymbol;
     int numChars;
     unsigned char firstCh = ' ';  // initialize
+
+    // the first symbol to distinguish the padding zero
     in.read((char*)&firstCh, sizeof(firstCh));
     in.read((char*)&numNode, sizeof(numNode));
     in.read((char*)&numSymbol, sizeof(numSymbol));
@@ -80,6 +85,8 @@ void trueDecompression(string inFileName, string outFileName) {
     vector<int> childState;
     vector<unsigned char> symbolVec;
     BitInputStream ish(in);
+
+    // update childState and symbolVec for reconstruct the tree
     for (int i = 0; i < numNode; i++) {
         int temp = ish.readBit();
         childState.push_back(temp);
@@ -95,6 +102,7 @@ void trueDecompression(string inFileName, string outFileName) {
         symbolVec.push_back(c);
     }
 
+    // reconstruct the tree
     HCTree tree;
     tree.reconstruct(childState, symbolVec);
 
@@ -137,10 +145,8 @@ int main(int argc, char* argv[]) {
     }
     if (isAsciiOutput) {
         pseudoDecompression(argv[2], argv[3]);
-        // pseudoCompression("data/check1.txt", "compressed.txt");
     } else {
         trueDecompression(argv[1], argv[2]);
-        // trueDecompression("compressed.txt", "decompressed.txt");
     }
     return 0;
 }

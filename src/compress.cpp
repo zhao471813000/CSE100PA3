@@ -1,5 +1,7 @@
 /**
- * Compress file.
+ * Compress file. Pseudo compression with ascii encoding and naive header is for
+ * checkpoint, and True compression with bitwise i/o and small header is for
+ * final.
  *
  * Author: Dingqian Zhao A53319585, Kexin Hong A53311871
  */
@@ -65,7 +67,14 @@ void pseudoCompression(string inFileName, string outFileName) {
     in.close();
 }
 
-/* True compression with bitwise i/o and small header (final) */
+/* True compression with bitwise i/o and small header (final)
+   To realize optimal header, the huffman tree is rebuilt from 0/1 serials and
+   symbols of the leaves from the header.
+   The header stores the first symbol, the number of nodes, symbols, and chars
+   as int first. Then, the 0/1 sequence indicates whether this node is a
+   internal node. Specific details about serial function is in HCTree. After
+   that, the symbols are stored as char.
+*/
 void trueCompression(string inFileName, string outFileName) {
     unsigned int size = 256;
     // check empty files
@@ -80,6 +89,7 @@ void trueCompression(string inFileName, string outFileName) {
     in.open(inFileName, ios::binary);
 
     // count symbols to get freqs
+
     vector<unsigned int> freqs(256, 0);
     int numChars = 0;
     unsigned char ch;
@@ -99,14 +109,18 @@ void trueCompression(string inFileName, string outFileName) {
     vector<unsigned char> symbolVec = tree.getSymbolVec();
     int numNode = childState.size();
     int numSymbol = symbolVec.size();
-    // Open output file
-    // print header
+
     ofstream out;
+    // Open output file
     out.open(outFileName, ios::binary | ios::trunc);
+    // print header
+
+    // the first symbol to distinguish the padding zero
     out.write((char*)&symbolVec[0], sizeof(symbolVec[0]));
-    out.write((char*)&numNode, sizeof(numNode));
-    out.write((char*)&numSymbol, sizeof(numSymbol));
-    out.write((char*)&numChars, sizeof(numChars));
+    out.write((char*)&numNode, sizeof(numNode));      // number of the nodes
+    out.write((char*)&numSymbol, sizeof(numSymbol));  // number of the symbols
+    out.write((char*)&numChars,
+              sizeof(numChars));  // number of the chars in the input file
     BitOutputStream osh(out);
 
     for (int i : childState) {
@@ -121,7 +135,7 @@ void trueCompression(string inFileName, string outFileName) {
 
     // open input file to encode
     byte symbol;
-    // ifstream in;
+
     in.open(inFileName, ios::binary);
     BitOutputStream os(out);
     while (1) {
@@ -158,10 +172,8 @@ int main(int argc, char** argv) {
     }
     if (isAsciiOutput) {
         pseudoCompression(argv[2], argv[3]);
-        // pseudoCompression("data/check1.txt", "compressed.txt");
     } else {
         trueCompression(argv[1], argv[2]);
-        // trueCompression("data/warandpeace.txt", "compressed.txt");
     }
     return 0;
 }
