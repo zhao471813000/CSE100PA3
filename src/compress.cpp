@@ -63,7 +63,6 @@ void pseudoCompression(string inFileName, string outFileName) {
 
     out.close();
     in.close();
-    delete &tree;
 }
 
 /* True compression with bitwise i/o and small header (final) */
@@ -134,7 +133,6 @@ void trueCompression(string inFileName, string outFileName) {
 
     out.close();
     in.close();
-    delete &tree;
 }
 
 /* Main program that runs the compress */

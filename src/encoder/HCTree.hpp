@@ -59,6 +59,7 @@ class HCTree {
 
     /* Reconstructs the HCTree. */
     void reconstruct(vector<int> childState, vector<unsigned char> symbolVec);
+
     /* Destructor for HCTree. */
     ~HCTree();
     /* Serializes a Huffman Tree.*/

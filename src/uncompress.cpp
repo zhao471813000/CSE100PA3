@@ -51,7 +51,6 @@ void pseudoDecompression(string inFileName, string outFileName) {
 
     in.close();
     out.close();
-    delete &tree;
 }
 
 /* True decompression with bitwise i/o and small header (final) */
@@ -73,7 +72,7 @@ void trueDecompression(string inFileName, string outFileName) {
     int numNode;
     int numSymbol;
     int numChars;
-    unsigned char firstCh;
+    unsigned char firstCh = ' ';  // initialize
     in.read((char*)&firstCh, sizeof(firstCh));
     in.read((char*)&numNode, sizeof(numNode));
     in.read((char*)&numSymbol, sizeof(numSymbol));
@@ -86,7 +85,7 @@ void trueDecompression(string inFileName, string outFileName) {
         childState.push_back(temp);
     }
 
-    unsigned char c;
+    unsigned char c = ' ';
     while (c != firstCh) {
         in.read((char*)&c, sizeof(c));
     }
@@ -97,7 +96,6 @@ void trueDecompression(string inFileName, string outFileName) {
     }
 
     HCTree tree;
-    // tree.build(freqs);
     tree.reconstruct(childState, symbolVec);
 
     // Open the output file
@@ -114,7 +112,6 @@ void trueDecompression(string inFileName, string outFileName) {
 
     in.close();
     out.close();
-    delete &tree;
 }
 
 /* Main program that runs the uncompress */
