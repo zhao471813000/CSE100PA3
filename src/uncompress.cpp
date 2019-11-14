@@ -35,15 +35,15 @@ void pseudoDecompression(string inFileName, string outFileName) {
         in >> freqs[i];
         numChar += freqs[i];
     }
-    HCTree* tree;
-    tree->build(freqs);
+    HCTree tree;
+    tree.build(freqs);
 
     // Open the output file
     ofstream out;
     out.open(outFileName, ios::binary | ios::trunc);
     byte symbol;
     while (numChar) {
-        symbol = tree->decode(in);
+        symbol = tree.decode(in);
         if (in.eof()) break;
         out << (char)symbol;
         numChar--;
@@ -51,7 +51,7 @@ void pseudoDecompression(string inFileName, string outFileName) {
 
     in.close();
     out.close();
-    delete tree;
+    delete &tree;
 }
 
 /* True decompression with bitwise i/o and small header (final) */
@@ -96,9 +96,9 @@ void trueDecompression(string inFileName, string outFileName) {
         symbolVec.push_back(c);
     }
 
-    HCTree* tree;
+    HCTree tree;
     // tree.build(freqs);
-    tree->reconstruct(childState, symbolVec);
+    tree.reconstruct(childState, symbolVec);
 
     // Open the output file
     ofstream out;
@@ -107,14 +107,14 @@ void trueDecompression(string inFileName, string outFileName) {
     BitInputStream is(in);
     // in.get();
     for (int i = 0; i < numChars; i++) {
-        symbol = tree->decode(is);
+        symbol = tree.decode(is);
         if (in.eof()) break;
         out << (unsigned char)symbol;
     }
 
     in.close();
     out.close();
-    delete tree;
+    delete &tree;
 }
 
 /* Main program that runs the uncompress */

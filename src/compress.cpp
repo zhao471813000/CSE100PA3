@@ -40,8 +40,8 @@ void pseudoCompression(string inFileName, string outFileName) {
     }
 
     // build tree
-    HCTree* tree;
-    tree->build(freqs);
+    HCTree tree;
+    tree.build(freqs);
     in.close();
 
     // Open output file
@@ -58,12 +58,12 @@ void pseudoCompression(string inFileName, string outFileName) {
     while (1) {
         symbol = in.get();
         if (in.eof()) break;
-        tree->encode(symbol, out);
+        tree.encode(symbol, out);
     }
 
     out.close();
     in.close();
-    delete tree;
+    delete &tree;
 }
 
 /* True compression with bitwise i/o and small header (final) */
@@ -92,12 +92,12 @@ void trueCompression(string inFileName, string outFileName) {
     }
     in.close();
     // build tree
-    HCTree *tree;
-    tree->build(freqs);
+    HCTree tree;
+    tree.build(freqs);
     // Serialize the tree
-    tree->serial();
-    vector<int> childState = tree->getChildState();
-    vector<unsigned char> symbolVec = tree->getSymbolVec();
+    tree.serial();
+    vector<int> childState = tree.getChildState();
+    vector<unsigned char> symbolVec = tree.getSymbolVec();
     int numNode = childState.size();
     int numSymbol = symbolVec.size();
     // Open output file
@@ -128,13 +128,13 @@ void trueCompression(string inFileName, string outFileName) {
     while (1) {
         symbol = (unsigned char)in.get();
         if (in.eof()) break;
-        tree->encode(symbol, os);
+        tree.encode(symbol, os);
     }
     os.flush();
 
     out.close();
     in.close();
-    delete tree;
+    delete &tree;
 }
 
 /* Main program that runs the compress */
