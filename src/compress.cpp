@@ -89,8 +89,6 @@ void trueCompression(string inFileName, string outFileName) {
         freqs[(int)ch]++;
         numChars++;
     }
-    // freqs[10] = 0;
-    // freqs[97] = freqs[98] = freqs[99] = freqs[100] = 1;
     in.close();
     // build tree
     HCTree tree;
@@ -98,13 +96,14 @@ void trueCompression(string inFileName, string outFileName) {
     // Serialize the tree
     tree.serial();
     vector<int> childState = tree.getChildState();
-    vector<char> symbolVec = tree.getSymbolVec();
+    vector<unsigned char> symbolVec = tree.getSymbolVec();
     int numNode = childState.size();
     int numSymbol = symbolVec.size();
     // Open output file
     // print header
     ofstream out;
     out.open(outFileName, ios::binary | ios::trunc);
+    out.write((char*)&symbolVec[0], sizeof(symbolVec[0]));
     out.write((char*)&numNode, sizeof(numNode));
     out.write((char*)&numSymbol, sizeof(numSymbol));
     out.write((char*)&numChars, sizeof(numChars));
@@ -115,8 +114,9 @@ void trueCompression(string inFileName, string outFileName) {
     }
     osh.flush();  // write out unflush bits
 
-    for (char c : symbolVec) {
+    for (unsigned char c : symbolVec) {
         out.write((char*)&c, sizeof(c));
+        // out<<c;
     }
 
     // open input file to encode
@@ -156,7 +156,6 @@ int main(int argc, char** argv) {
         cout << options.help({""}) << std ::endl;
         exit(0);
     }
-    // bool isAsciiOutput = false;
     if (isAsciiOutput) {
         pseudoCompression(argv[2], argv[3]);
         // pseudoCompression("data/check1.txt", "compressed.txt");

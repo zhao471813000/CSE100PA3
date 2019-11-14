@@ -30,7 +30,7 @@ class HCTree {
        then the corresponding postion in vector is 1; otherwise 0.
        SymbolVec is used to store the symbols in leaves. */
     vector<int> childState;
-    vector<char> symbolVec;
+    vector<unsigned char> symbolVec;
 
     /* Decides whether the pointer points to a leaf. */
     bool isLeaf(HCNode* node) const;
@@ -46,18 +46,19 @@ class HCTree {
     void serialHelper(HCNode* node);
 
     /* Reconstructs Helper the HCTree. */
-    HCNode* reconstructHelper(vector<int> childState, vector<char> symbolVec,
-                              int& cindex, int& sindex);
+    HCNode* reconstructHelper(vector<int> childState,
+                              vector<unsigned char> symbolVec, int& cindex,
+                              int& sindex);
 
   public:
     /* Initializes a new empty HCTree. */
     HCTree() : root(0) {
         vector<int> childState;
-        vector<char> symbolVec;
+        vector<unsigned char> symbolVec;
     }
 
     /* Reconstructs the HCTree. */
-    void reconstruct(vector<int> childState, vector<char> symbolVec);
+    void reconstruct(vector<int> childState, vector<unsigned char> symbolVec);
 
     /* Destructor for HCTree. */
     ~HCTree();
@@ -68,7 +69,7 @@ class HCTree {
     vector<int> getChildState() { return childState; }
 
     /* Returns symbolVec vector.*/
-    vector<char> getSymbolVec() { return symbolVec; }
+    vector<unsigned char> getSymbolVec() { return symbolVec; }
 
     /* Builds the HCTree from the given frequency vector. Assume the vector must
      * have size 256 and each value at index i represents the frequency of char

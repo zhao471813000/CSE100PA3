@@ -145,7 +145,8 @@ void HCTree::serialHelper(HCNode* node) {
 }
 /* Reconstructs the HCTree.
    count all set to 1, internal nodes symbol sets to ' ' empty space. */
-void HCTree::reconstruct(vector<int> childState, vector<char> symbolVec) {
+void HCTree::reconstruct(vector<int> childState,
+                         vector<unsigned char> symbolVec) {
     if (childState[0] == 1) {
         // root only has one left leaf --special case
         HCNode* left = new HCNode(1, symbolVec[0]);
@@ -162,7 +163,7 @@ void HCTree::reconstruct(vector<int> childState, vector<char> symbolVec) {
 
 /* Reconstructs Helper the HCTree. */
 HCNode* HCTree::reconstructHelper(vector<int> childState,
-                                  vector<char> symbolVec, int& cindex,
+                                  vector<unsigned char> symbolVec, int& cindex,
                                   int& sindex) {
     if (childState[cindex] == 0) {
         HCNode* curr = new HCNode(1, symbolVec[sindex]);

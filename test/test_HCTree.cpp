@@ -28,8 +28,8 @@ TEST_F(SimpleHCTreeFixture, TEST_Serial) {
     tree.serial();
     vector<int> expectedChildState = {0, 1, 1, 0, 1, 0, 0, 1, 0, 0};
     vector<int> returnChildState = tree.getChildState();
-    vector<char> expectedSymbolVec = {'b', 'e', 'a', 'c', 'd'};
-    vector<char> returnSymbolVec = tree.getSymbolVec();
+    vector<unsigned char> expectedSymbolVec = {'b', 'e', 'a', 'c', 'd'};
+    vector<unsigned char> returnSymbolVec = tree.getSymbolVec();
 
     ASSERT_EQ(expectedChildState, returnChildState);
     ASSERT_EQ(expectedSymbolVec, returnSymbolVec);
@@ -43,7 +43,7 @@ class ReconstructHCTreeFixture : public ::testing::Test {
     ReconstructHCTreeFixture() {
         // initialization code here
         vector<int> ChildState = {0, 1, 1, 0, 1, 0, 0, 1, 0, 0};
-        vector<char> symbolVec = {'b', 'e', 'a', 'c', 'd'};
+        vector<unsigned char> symbolVec = {'b', 'e', 'a', 'c', 'd'};
         tree.reconstruct(ChildState, symbolVec);
     }
 };
@@ -153,8 +153,8 @@ TEST_F(SpecialHCTreeFixture, TEST_Oneleaf) {
     tree3.serial();
     vector<int> expectedChildState = {1};
     vector<int> returnChildState = tree3.getChildState();
-    vector<char> expectedSymbolVec = {'a'};
-    vector<char> returnSymbolVec = tree3.getSymbolVec();
+    vector<unsigned char> expectedSymbolVec = {'a'};
+    vector<unsigned char> returnSymbolVec = tree3.getSymbolVec();
 
     ASSERT_EQ(expectedChildState, returnChildState);
     ASSERT_EQ(expectedSymbolVec, returnSymbolVec);

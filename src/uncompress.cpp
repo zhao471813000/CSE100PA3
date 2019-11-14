@@ -72,28 +72,29 @@ void trueDecompression(string inFileName, string outFileName) {
     int numNode;
     int numSymbol;
     int numChars;
+    unsigned char firstCh;
+    in.read((char*)&firstCh, sizeof(firstCh));
     in.read((char*)&numNode, sizeof(numNode));
     in.read((char*)&numSymbol, sizeof(numSymbol));
     in.read((char*)&numChars, sizeof(numChars));
     vector<int> childState;
-    vector<char> symbolVec;
+    vector<unsigned char> symbolVec;
     BitInputStream ish(in);
     for (int i = 0; i < numNode; i++) {
         int temp = ish.readBit();
         childState.push_back(temp);
     }
-    for (int i = 0; i < numSymbol; i++) {
-        char c;
+
+    unsigned char c;
+    while (c != firstCh) {
+        in.read((char*)&c, sizeof(c));
+    }
+    symbolVec.push_back(c);
+    for (int i = 1; i < numSymbol; i++) {
         in.read((char*)&c, sizeof(c));
         symbolVec.push_back(c);
     }
-    // int index = 0;
-    // int numChar = 0;
-    // vector<unsigned int> freqs(256, 0);
-    // for (int i = 0; i < 256; i++) {
-    //     in >> freqs[i];
-    //     numChar += freqs[i];
-    // }
+
     HCTree tree;
     // tree.build(freqs);
     tree.reconstruct(childState, symbolVec);
@@ -107,7 +108,7 @@ void trueDecompression(string inFileName, string outFileName) {
     for (int i = 0; i < numChars; i++) {
         symbol = tree.decode(is);
         if (in.eof()) break;
-        out << (char)symbol;
+        out << (unsigned char)symbol;
     }
 
     in.close();
@@ -116,7 +117,7 @@ void trueDecompression(string inFileName, string outFileName) {
 
 /* Main program that runs the uncompress */
 int main(int argc, char* argv[]) {
-    // do option parsing with cxxopts
+    //    do option parsing with cxxopts
     cxxopts::Options options("./decompress",
                              "Decompresses files using Huffman Encoding");
     options.positional_help("./path_to_input_file ./path_to_output_file");
@@ -135,7 +136,6 @@ int main(int argc, char* argv[]) {
         cout << options.help({""}) << std ::endl;
         exit(0);
     }
-    // bool isAsciiOutput = false;
     if (isAsciiOutput) {
         pseudoDecompression(argv[2], argv[3]);
         // pseudoCompression("data/check1.txt", "compressed.txt");
