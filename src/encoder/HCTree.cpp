@@ -192,3 +192,4 @@ void HCTree::deleteAll(HCNode* node) {
     }
     delete node;
 }
+
